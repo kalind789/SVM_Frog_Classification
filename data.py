@@ -1,5 +1,6 @@
 import pandas as pd
 import sklearn
+from sklearn.model_selection import train_test_split
 
 def get_data(dataset):
     # Load the dataset, skip the first row because it's useless
@@ -9,13 +10,15 @@ def get_data(dataset):
     df = df.drop('ID', axis=1)
     
     # We have some categorical data in the dataset, we must turn this into useful information. 
-    
+    df_encoded = pd.get_dummies(df, columns=['Motorway', 'TR', 'VR', 'UR', 'FR', 'OR', 'RR', 'BR', 'MR', 'CR'])
+
     # Set the target to the fire bellied toad
-    target = df['Fire-bellied toad']
+    target = df_encoded['Fire-bellied toad']
+
     # Set anything other than the fire bellied toad to the features
-    features = df.drop(['Fire-bellied toad'], axis=1)
+    features = df_encoded.drop(['Fire-bellied toad'], axis=1)
 
+    # Split the data into training and testing sets
+    features_train, features_test, targets_train, targets_test = train_test_split(features, target, test_size=0.2, random_state=42)
 
-if __name__ == '__main__':
-    dataset = 'dataset.csv'
-    get_data(dataset=dataset)
+    return features_train, features_test, targets_train, targets_test
